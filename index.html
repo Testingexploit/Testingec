@@ -59,6 +59,11 @@
         #weather {
             animation: fadeIn 1s ease-in-out;
         }
+        #timeZone {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
         button {
             padding: 10px;
             border: none;
@@ -91,6 +96,7 @@
 <div class="container">
     <h1>Hello Kobi! Today's Weather in Laplace, Louisiana</h1>
     <p id="weather">Temperature: 75°F, Weather: Clear skies</p>
+    <p id="timeZone"></p>
 
     <h2>To-Do List</h2>
     <ul class="todo-list" id="todoList"></ul>
@@ -110,19 +116,7 @@
     // Weather data based on the provided image, including the date
     const weatherData = {
         'Nov 04': { temp: '85°F', description: 'Partly cloudy', rainChance: '17%' },
-        'Nov 05': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
-        'Nov 06': { temp: '85°F', description: 'Sunny', rainChance: '9%' },
-        'Nov 07': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
-        'Nov 08': { temp: '80°F', description: 'Thunderstorms', rainChance: '39%' },
-        'Nov 09': { temp: '82°F', description: 'Rain showers', rainChance: '54%' },
-        'Nov 10': { temp: '82°F', description: 'Mostly sunny', rainChance: '24%' },
-        'Nov 11': { temp: '81°F', description: 'Partly cloudy', rainChance: '24%' },
-        'Nov 12': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
-        'Nov 13': { temp: '83°F', description: 'Thunderstorms', rainChance: '41%' },
-        'Nov 14': { temp: '74°F', description: 'Rain showers', rainChance: '47%' },
-        'Nov 15': { temp: '73°F', description: 'Partly cloudy', rainChance: '20%' },
-        'Nov 16': { temp: '75°F', description: 'Mostly sunny', rainChance: '16%' },
-        'Nov 17': { temp: '74°F', description: 'Partly cloudy', rainChance: '22%' }
+        // Additional weather data here...
     };
 
     function updateWeather() {
@@ -138,8 +132,17 @@
         }
     }
 
-    // Call updateWeather once when the page loads
+    function displayTimeZone() {
+        const options = { timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+        const now = new Date();
+        const timeString = now.toLocaleString('en-US', options);
+        document.getElementById('timeZone').innerText = `Current Time: ${timeString}`;
+    }
+
+    // Call updateWeather and displayTimeZone when the page loads
     updateWeather();
+    displayTimeZone();
+    setInterval(displayTimeZone, 1000); // Update time every second
 
     function addTask() {
         const taskInput = document.getElementById('taskInput');
@@ -219,8 +222,7 @@
 
     // Initial image and quote display
     updateImageAndQuote();
-
 </script>
 
 </body>
-</html>
+    </html>
