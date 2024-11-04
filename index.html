@@ -3,67 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirect Page</title>
+    <title>To-Do List</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #000;
-            color: #fff;
             font-family: Arial, sans-serif;
-            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
         }
-        .pfp {
-            width: 150px;  /* Set the desired width */
-            height: 150px; /* Set the desired height */
-            border-radius: 50%; /* Makes the image circular */
-            background-color: red; /* Solid red background */
-            margin-bottom: 20px;
-            /* Optional: add border or shadow */
-            border: 3px solid #fff;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: blue;
-            color: white;
-            text-decoration: none;
+        .container {
+            background: white;
+            padding: 20px;
             border-radius: 5px;
-            font-size: 18px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        .todo-list li {
+            margin: 10px 0;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.5s forwards;
+        }
+        .photo-frame-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
             margin-top: 20px;
         }
-        .button:hover {
-            background-color: darkblue;
+        #photoFrame {
+            width: 200px;
+            height: 200px;
+            border: 5px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eaeaea;
         }
-        #click-counter {
-            margin-top: 10px;
-            font-size: 1em;
+        #photoFrame img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        #motivationalText {
+            font-size: 16px;
+            color: #555;
+            width: 200px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        #weather {
+            animation: fadeIn 1s ease-in-out;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Solid Red PFP -->
-    <div class="pfp"></div>
-    
-    <a href="https://yuhyuh5.github.io/Yuhy/" class="button" onclick="incrementClickCounter()">Go to</a>
-    
 
-    <script>
-        // Initialize the click counter from local storage, or set it to 0 if it doesn't exist
-        let clickCount = localStorage.getItem("clickCount") || 0;
-        document.getElementById("click-counter").textContent = `Clicks: ${clickCount}`;
+<div class="container">
+    <h1>Hello Kobi! Today's Weather in Laplace, Louisiana</h1>
+    <p id="weather">Temperature: 75°F, Weather: Clear skies</p>
 
-        // Function to increment the click counter
-        function incrementClickCounter() {
-            clickCount++;
-            localStorage.setItem("clickCount", clickCount); // Save updated count
-            document.getElementById("click-counter").textContent = `Clicks: ${clickCount}`;
+    <h2>To-Do List</h2>
+    <ul class="todo-list" id="todoList"></ul>
+    <input type="text" id="taskInput" placeholder="Add a new task" />
+    <button onclick="addTask()">Add Task</button>
+
+    <h2>Photo Frame & Motivational Notes</h2>
+    <div class="photo-frame-container">
+        <div id="photoFrame">
+            <img id="frameImage" src="https://i.ibb.co/KKRRD6x/IMG-20241018-192834.jpg" alt="Slideshow Image" />
+        </div>
+        <div id="motivationalText">"Believe in yourself and all that you are."</div>
+    </div>
+</div>
+
+<script>
+    // Weather data based on the provided image, including the date
+    const weatherData = {
+        'Nov 04': { temp: '85°F', description: 'Partly cloudy', rainChance: '17%' },
+        'Nov 05': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
+        'Nov 06': { temp: '85°F', description: 'Sunny', rainChance: '9%' },
+        'Nov 07': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
+        'Nov 08': { temp: '80°F', description: 'Thunderstorms', rainChance: '39%' },
+        'Nov 09': { temp: '82°F', description: 'Rain showers', rainChance: '54%' },
+        'Nov 10': { temp: '82°F', description: 'Mostly sunny', rainChance: '24%' },
+        'Nov 11': { temp: '81°F', description: 'Partly cloudy', rainChance: '24%' },
+        'Nov 12': { temp: '84°F', description: 'Mostly sunny', rainChance: '24%' },
+        'Nov 13': { temp: '83°F', description: 'Thunderstorms', rainChance: '41%' },
+        'Nov 14': { temp: '74°F', description: 'Rain showers', rainChance: '47%' },
+        'Nov 15': { temp: '73°F', description: 'Partly cloudy', rainChance: '20%' },
+        'Nov 16': { temp: '75°F', description: 'Mostly sunny', rainChance: '16%' },
+        'Nov 17': { temp: '74°F', description: 'Partly cloudy', rainChance: '22%' }
+    };
+
+    function updateWeather() {
+        const today = new Date();
+        const dateString = today.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+        const weather = weatherData[dateString];
+
+        if (weather) {
+            document.getElementById('weather').innerText = 
+                `Temperature: ${weather.temp}, Weather: ${weather.description}, Rain Chance: ${weather.rainChance}`;
+        } else {
+            document.getElementById('weather').innerText = 'Weather data not available for today.';
         }
-    </script>
+    }
+
+    // Call updateWeather once when the page loads
+    updateWeather();
+
+    function addTask() {
+        const taskInput = document.getElementById('taskInput');
+        const taskValue = taskInput.value.trim();
+        if (taskValue) {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="checkbox"> ${taskValue} <button onclick="removeTask(this)">Remove</button>`;
+            document.getElementById('todoList').appendChild(li);
+            taskInput.value = '';
+            saveTasks();
+        }
+    }
+
+    function removeTask(button) {
+        const li = button.parentElement;
+        li.remove();
+        saveTasks();
+    }
+
+    function saveTasks() {
+        const tasks = [];
+        const items = document.querySelectorAll('#todoList li');
+        items.forEach(item => {
+            const text = item.innerText.replace('Remove', '').trim();
+            tasks.push(text);
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.forEach(task => {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="checkbox"> ${task} <button onclick="removeTask(this)">Remove</button>`;
+            document.getElementById('todoList').appendChild(li);
+        });
+    }
+
+    window.onload = loadTasks;
+
+    // Slideshow functionality for photo frame
+    const imageUrls = [
+        "https://i.ibb.co/KKRRD6x/IMG-20241018-192834.jpg",
+        "https://i.ibb.co/1X32785/IMG-20241018-192815.jpg",
+        "https://i.ibb.co/W5ytGDs/IMG-20241015-084712.jpg",
+        "https://i.ibb.co/BsGm8NK/IMG-20241012-110202.jpg",
+        "https://i.ibb.co/3ytz13W/IMG-20241012-105701.jpg",
+        "https://i.ibb.co/195F164/IMG-20241006-174402.jpg",
+        "https://i.ibb.co/D7dYy7J/IMG-20241006-174428.jpg",
+        "https://i.ibb.co/xGtF0v7/IMG-20241006-173822.jpg"
+    ];
+
+    const motivationalQuotes = [
+        "Believe in yourself and all that you are.",
+        "Every day is a fresh start.",
+        "You are capable of amazing things.",
+        "Stay positive, work hard, make it happen.",
+        "Difficult roads often lead to beautiful destinations.",
+        "You have the power to create change.",
+        "Dream big and dare to fail.",
+        "Your only limit is your mind."
+    ];
+
+    let currentImageIndex = 0;
+
+    function updateImageAndQuote() {
+        const frameImage = document.getElementById('frameImage');
+        const motivationalText = document.getElementById('motivationalText');
+
+        frameImage.src = imageUrls[currentImageIndex];
+        motivationalText.innerText = motivationalQuotes[currentImageIndex];
+
+        currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+    }
+
+    setInterval(updateImageAndQuote, 5000); // Change image and quote every 5 seconds
+
+    // Initial image and quote display
+    updateImageAndQuote();
+
+</script>
+
 </body>
 </html>
